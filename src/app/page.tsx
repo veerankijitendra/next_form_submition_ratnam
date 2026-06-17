@@ -8,7 +8,6 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function Home() {
@@ -22,14 +21,11 @@ export default function Home() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: formData.name || "",
-      phone: formData.phone || "",
-      email: formData.email || "",
-      city: formData.city || "",
-      age: formData.age || "",
-      items: formData.items || "",
-      total: formData.total || undefined,
-      payment: formData.payment || "",
-      notes: formData.notes || "",
+      firmName: formData.firmName || "",
+      address: formData.address || "",
+      mobile: formData.mobile || "",
+      gst: formData.gst || "",
+      dealingIn: formData.dealingIn || "",
     },
   });
 
@@ -70,79 +66,74 @@ export default function Home() {
     window.print();
   };
 
-  const renderReceiptRow = (label: string, value: string | number | undefined) => (
-    <div className="flex justify-between items-start py-1.5 border-b border-dashed border-[#E5E5E5] last:border-0 print:border-[#ccc] print:py-1">
-      <span className="text-[13px] font-medium text-[#5F5E5A] print:text-black print:text-[12px]">{label}</span>
-      <span className="text-[14px] font-semibold text-[#2C2C2A] text-right ml-4 max-w-[60%] break-words print:text-black print:text-[12px]">{value || '—'}</span>
+  const renderReceiptRow = (label: string, value: string | undefined) => (
+    <div className="flex justify-between items-start py-2 border-b border-dashed border-[#CBD5E1] last:border-0 print:border-[#ccc] print:py-1">
+      <span className="text-[14px] font-medium text-[#334155] print:text-black print:text-[12px]">{label}</span>
+      <span className="text-[14px] font-medium text-[#0F172A] text-right ml-4 max-w-[60%] break-words print:text-black print:text-[12px]">{value || '—'}</span>
     </div>
   );
 
   if (isSuccess) {
     return (
-      <Card className="bg-white border-[#D3D1C7] border-[0.5px] rounded-[14px] p-5 sm:p-7 md:p-8 shadow-sm w-full mx-auto max-w-[680px] print:max-w-[80mm] print:mx-auto print:border-none print:shadow-none print:p-0 print:text-black font-roboto">
+      <Card className="bg-white border-[#CBD5E1] border rounded-[14px] p-6 sm:p-10 shadow-sm w-full mx-auto max-w-[900px] print:max-w-[80mm] print:mx-auto print:border-none print:shadow-none print:p-0 print:text-black font-roboto">
         {/* On-Screen Success Header */}
-        <div className="text-center mb-6 sm:mb-7 print:hidden">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#E1F5EE] text-[#0F6E56] mb-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="text-center mb-8 sm:mb-10 print:hidden">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#EFF6FF] text-[#3B82F6] mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-xl sm:text-[22px] font-semibold text-[#0F6E56] font-inter">Your form has been submitted successfully.</h1>
-          <p className="text-[13px] sm:text-[14px] text-[#888780] mt-1.5">
-            Below is the generated receipt for this submission.
+          <h1 className="text-2xl sm:text-3xl font-semibold text-[#0F172A] font-inter">Submission Successful</h1>
+          <p className="text-[15px] text-[#334155] mt-2">
+            The business details have been recorded. You can print the receipt below.
           </p>
         </div>
 
         {/* Receipt Area (Printed & Displayed) */}
-        <div className="bg-[#F9F9F9] print:bg-transparent rounded-[10px] p-5 sm:p-6 border border-[#E5E5E5] print:border-none print:p-0">
-          <div className="text-center mb-4">
-            <h2 className="text-[18px] font-bold font-inter text-[#0F6E56] print:text-black print:text-[16px]">My Clothing Stall</h2>
-            <div className="text-[14px] font-semibold mt-1 print:text-[13px]">Submission Receipt</div>
-            <div className="text-[12px] text-[#888780] mt-1 print:text-black print:text-[10px]">
+        <div className="bg-[#F8FAFC] print:bg-transparent rounded-[12px] p-6 sm:p-8 border border-[#CBD5E1] print:border-none print:p-0 max-w-[500px] mx-auto print:max-w-full">
+          <div className="text-center mb-5">
+            <h2 className="text-[20px] font-bold font-inter text-[#0F172A] print:text-black print:text-[16px]">Business Registration</h2>
+            <div className="text-[15px] font-medium text-[#334155] mt-1 print:text-[13px] print:text-black">Submission Receipt</div>
+            <div className="text-[13px] text-[#334155] mt-1.5 print:text-black print:text-[10px]">
               ID: {receiptId} &bull; {new Date().toLocaleString('en-IN', { hour12: true, month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit' })}
             </div>
           </div>
 
-          <div className="w-full h-[1px] border-t-2 border-dashed border-[#D3D1C7] my-4 print:border-black print:my-2"></div>
+          <div className="w-full h-[1px] border-t-[1.5px] border-dashed border-[#CBD5E1] my-5 print:border-black print:my-2"></div>
 
           <div className="flex flex-col w-full">
-            {renderReceiptRow("Customer Name", formData.name)}
-            {renderReceiptRow("Phone Number", formData.phone)}
-            {formData.email && renderReceiptRow("Email", formData.email)}
-            {formData.city && renderReceiptRow("City", formData.city)}
-            {formData.age && renderReceiptRow("Age Group", formData.age)}
+            {renderReceiptRow("Name", formData.name)}
+            {renderReceiptRow("Firm Name", formData.firmName)}
+            {renderReceiptRow("Mobile Number", formData.mobile)}
+            {formData.gst && renderReceiptRow("GST Number", formData.gst)}
           </div>
 
-          <div className="w-full h-[1px] border-t-2 border-dashed border-[#D3D1C7] my-4 print:border-black print:my-2"></div>
+          <div className="w-full h-[1px] border-t-[1.5px] border-dashed border-[#CBD5E1] my-5 print:border-black print:my-2"></div>
 
           <div className="flex flex-col w-full">
-            {renderReceiptRow("Items Purchased", formData.items)}
-            {formData.notes && renderReceiptRow("Notes", formData.notes)}
-            <div className="flex justify-between items-center py-2 mt-2">
-              <span className="text-[15px] font-bold text-[#2C2C2A] print:text-black print:text-[14px]">Total</span>
-              <span className="text-[16px] font-bold text-[#0F6E56] print:text-black print:text-[14px]">₹{formData.total || 0}</span>
-            </div>
-            {formData.payment && (
-              <div className="flex justify-between items-center py-1">
-                <span className="text-[13px] font-medium text-[#5F5E5A] print:text-black print:text-[12px]">Payment Method</span>
-                <span className="text-[13px] font-semibold text-[#2C2C2A] print:text-black print:text-[12px]">{formData.payment}</span>
-              </div>
-            )}
+            {renderReceiptRow("Dealing In", formData.dealingIn)}
+            {renderReceiptRow("Address", formData.address)}
           </div>
 
-          <div className="w-full h-[1px] border-t-2 border-dashed border-[#D3D1C7] my-4 print:border-black print:my-2"></div>
+          <div className="w-full h-[1px] border-t-[1.5px] border-dashed border-[#CBD5E1] my-5 print:border-black print:my-2"></div>
 
-          <div className="text-center text-[12px] text-[#888780] mt-4 print:text-black print:text-[10px]">
-            Thank you for shopping with us!<br/>Please visit again.
+          <div className="text-center text-[13px] text-[#334155] mt-5 print:text-black print:text-[10px]">
+            Thank you for registering with us!
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row flex-wrap gap-2.5 pt-6 mt-4 border-t-[0.5px] border-[#D3D1C7] print:hidden">
-          <button onClick={handlePrint} className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-[14px] font-medium bg-[#0F6E56] text-white hover:opacity-90 active:scale-95 transition-all font-inter">
-            🖨️ Print Receipt
+        <div className="flex flex-col sm:flex-row justify-center gap-3 pt-8 mt-6 print:hidden">
+          <button onClick={handlePrint} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-[10px] text-[15px] font-medium bg-[#3B82F6] text-white hover:bg-[#2563EB] active:scale-[0.98] transition-all font-inter shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
+            </svg>
+            Print Receipt
           </button>
-          <button onClick={handleNewCustomer} className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-[14px] font-medium border-[1.5px] border-[#0F6E56] text-[#0F6E56] hover:bg-[#E1F5EE] active:scale-95 transition-all font-inter">
-            + New Customer Form
+          <button onClick={handleNewCustomer} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-[10px] text-[15px] font-medium bg-white border border-[#CBD5E1] text-[#0F172A] hover:bg-[#F8FAFC] active:scale-[0.98] transition-all font-inter shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            New Form
           </button>
         </div>
       </Card>
@@ -150,177 +141,125 @@ export default function Home() {
   }
 
   return (
-    <Card className="bg-white border-[#D3D1C7] border-[0.5px] rounded-[14px] p-5 sm:p-7 md:p-8 shadow-sm w-full mx-auto max-w-[680px]">
-      <div className="text-center mb-6 sm:mb-7">
-        <h1 className="text-xl sm:text-[22px] font-semibold text-[#0F6E56] font-inter">Welcome to Our Stall!</h1>
-        <p className="text-[13px] sm:text-[14px] text-[#888780] mt-1.5 font-roboto">
-          Please fill in your details &mdash; we&apos;ll keep you updated on offers & new collections.
+    <Card className="bg-white border border-[#CBD5E1] rounded-[14px] p-6 sm:p-10 shadow-sm w-full mx-auto max-w-[1000px]">
+      <div className="mb-8 sm:mb-10 text-center sm:text-left">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-[#0F172A] font-inter">Business Registration Form</h1>
+        <p className="text-[15px] text-[#334155] mt-2 font-roboto">
+          Please fill in the business details below. Fields marked with an asterisk (*) are required.
         </p>
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 font-roboto w-full">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 font-roboto w-full">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[14px] font-medium text-[#334155]">Name *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your full name" className="h-11 rounded-[10px] text-[15px] border-[#CBD5E1] focus-visible:ring-[#3B82F6]/20 focus-visible:border-[#3B82F6] w-full bg-[#F8FAFC] hover:bg-white transition-colors text-[#0F172A]" {...field} />
+                  </FormControl>
+                  <FormMessage className="text-[#EF4444]" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="firmName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[14px] font-medium text-[#334155]">Firm Name *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your firm name" className="h-11 rounded-[10px] text-[15px] border-[#CBD5E1] focus-visible:ring-[#3B82F6]/20 focus-visible:border-[#3B82F6] w-full bg-[#F8FAFC] hover:bg-white transition-colors text-[#0F172A]" {...field} />
+                  </FormControl>
+                  <FormMessage className="text-[#EF4444]" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="mobile"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[14px] font-medium text-[#334155]">Mobile Number *</FormLabel>
+                  <FormControl>
+                    <Input type="tel" placeholder="Enter your mobile number" className="h-11 rounded-[10px] text-[15px] border-[#CBD5E1] focus-visible:ring-[#3B82F6]/20 focus-visible:border-[#3B82F6] w-full bg-[#F8FAFC] hover:bg-white transition-colors text-[#0F172A]" {...field} />
+                  </FormControl>
+                  <FormMessage className="text-[#EF4444]" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="gst"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[14px] font-medium text-[#334155]">GST Number (Optional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter GST number (Optional)" className="h-11 rounded-[10px] text-[15px] border-[#CBD5E1] focus-visible:ring-[#3B82F6]/20 focus-visible:border-[#3B82F6] w-full bg-[#F8FAFC] hover:bg-white transition-colors text-[#0F172A]" {...field} />
+                  </FormControl>
+                  <FormMessage className="text-[#EF4444]" />
+                </FormItem>
+              )}
+            />
+          </div>
+
           <FormField
             control={form.control}
-            name="name"
+            name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[13px] font-medium text-[#5F5E5A]">Full name *</FormLabel>
+                <FormLabel className="text-[14px] font-medium text-[#334155]">Address *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Your full name" className="rounded-[7px] text-[15px] focus-visible:ring-[#1D9E75]/30 focus-visible:border-[#1D9E75] w-full" {...field} />
+                  <Textarea placeholder="Enter your complete business address" className="rounded-[10px] min-h-[80px] resize-y text-[15px] border-[#CBD5E1] focus-visible:ring-[#3B82F6]/20 focus-visible:border-[#3B82F6] w-full bg-[#F8FAFC] hover:bg-white transition-colors text-[#0F172A]" {...field} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[#EF4444]" />
               </FormItem>
             )}
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[13px] font-medium text-[#5F5E5A]">Phone number *</FormLabel>
-                  <FormControl>
-                    <Input type="tel" placeholder="e.g. 9876543210" className="rounded-[7px] text-[15px] focus-visible:ring-[#1D9E75]/30 focus-visible:border-[#1D9E75] w-full" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[13px] font-medium text-[#5F5E5A]">Email (optional)</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="you@example.com" className="rounded-[7px] text-[15px] focus-visible:ring-[#1D9E75]/30 focus-visible:border-[#1D9E75] w-full" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[13px] font-medium text-[#5F5E5A]">City</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. Hyderabad" className="rounded-[7px] text-[15px] focus-visible:ring-[#1D9E75]/30 focus-visible:border-[#1D9E75] w-full" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="age"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[13px] font-medium text-[#5F5E5A]">Age group</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="rounded-[7px] text-[15px] focus-visible:ring-[#1D9E75]/30 focus-visible:border-[#1D9E75] w-full bg-white">
-                        <SelectValue placeholder="Select…" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Under 18">Under 18</SelectItem>
-                      <SelectItem value="18–25">18–25</SelectItem>
-                      <SelectItem value="26–35">26–35</SelectItem>
-                      <SelectItem value="36–50">36–50</SelectItem>
-                      <SelectItem value="50+">50+</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
           <FormField
             control={form.control}
-            name="items"
+            name="dealingIn"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[13px] font-medium text-[#5F5E5A]">Items purchased *</FormLabel>
+                <FormLabel className="text-[14px] font-medium text-[#334155]">Dealing In *</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Blue kurti (₹450), White shirt (₹300)" className="rounded-[7px] text-[15px] focus-visible:ring-[#1D9E75]/30 focus-visible:border-[#1D9E75] w-full" {...field} />
+                  <Textarea placeholder="Describe the products or services your business deals in" className="rounded-[10px] min-h-[80px] resize-y text-[15px] border-[#CBD5E1] focus-visible:ring-[#3B82F6]/20 focus-visible:border-[#3B82F6] w-full bg-[#F8FAFC] hover:bg-white transition-colors text-[#0F172A]" {...field} />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <FormField
-              control={form.control}
-              name="total"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[13px] font-medium text-[#5F5E5A]">Total amount (₹)</FormLabel>
-                  <FormControl>
-                    <Input type="number" min="0" placeholder="0" className="rounded-[7px] text-[15px] focus-visible:ring-[#1D9E75]/30 focus-visible:border-[#1D9E75] w-full" {...field} value={field.value ?? ""} onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="payment"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[13px] font-medium text-[#5F5E5A]">Payment method</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="rounded-[7px] text-[15px] focus-visible:ring-[#1D9E75]/30 focus-visible:border-[#1D9E75] w-full bg-white">
-                        <SelectValue placeholder="Select…" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Cash">Cash</SelectItem>
-                      <SelectItem value="UPI">UPI</SelectItem>
-                      <SelectItem value="Card">Card</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="notes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-[13px] font-medium text-[#5F5E5A]">Any special notes (optional)</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="e.g. Wants matching dupatta, will visit again tomorrow…" className="rounded-[7px] min-h-[72px] resize-y text-[15px] focus-visible:ring-[#1D9E75]/30 focus-visible:border-[#1D9E75] w-full" {...field} />
-                </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[#EF4444]" />
               </FormItem>
             )}
           />
 
           {error && (
-            <div className="mt-2 p-3 bg-red-50 text-red-600 text-sm rounded-md font-roboto">
+            <div className="mt-4 p-4 bg-[#FEF2F2] border border-[#FECACA] text-[#EF4444] text-[14px] rounded-[10px] font-roboto">
               {error}
             </div>
           )}
 
-          <div className="flex flex-col sm:flex-row flex-wrap gap-2.5 pt-4">
-            <button type="submit" disabled={isSubmitting} className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-[14px] font-medium bg-[#0F6E56] text-white hover:opacity-90 active:scale-95 transition-all font-inter disabled:opacity-50">
-              {isSubmitting ? "Submitting..." : "✓ Submit"}
+          <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 mt-4 border-t border-[#CBD5E1]">
+            <button type="button" onClick={() => { form.reset(); clearFormData(); }} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-[10px] text-[15px] font-medium bg-white border border-[#CBD5E1] text-[#0F172A] hover:bg-[#F8FAFC] active:scale-[0.98] transition-all font-inter shadow-sm">
+              Clear Form
             </button>
-            <button type="button" onClick={() => { form.reset(); clearFormData(); }} className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-[14px] font-medium border-[1.5px] border-[#0F6E56] text-[#0F6E56] hover:bg-[#E1F5EE] active:scale-95 transition-all font-inter">
-              Clear form
+            <button type="submit" disabled={isSubmitting} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-[10px] text-[15px] font-medium bg-[#3B82F6] text-white hover:bg-[#2563EB] active:scale-[0.98] transition-all font-inter shadow-sm disabled:opacity-60 disabled:cursor-not-allowed">
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Submitting...
+                </>
+              ) : "Submit Details"}
             </button>
           </div>
         </form>

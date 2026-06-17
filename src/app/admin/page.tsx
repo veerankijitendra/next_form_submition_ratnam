@@ -6,14 +6,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 interface Submission {
   _id: string;
   name: string;
-  phone: string;
-  email?: string;
-  city?: string;
-  age?: string;
-  items: string;
-  total?: number;
-  payment?: string;
-  notes?: string;
+  firmName: string;
+  address: string;
+  mobile: string;
+  gst?: string;
+  dealingIn: string;
   createdAt: string;
 }
 
@@ -46,7 +43,7 @@ export default function AdminPage() {
   }, []);
 
   const handleClearData = async () => {
-    if (confirm("This will permanently delete all customer entries. Are you sure?")) {
+    if (confirm("This will permanently delete all records. Are you sure?")) {
       try {
         const res = await fetch("/api/form", { method: "DELETE" });
         if (res.ok) {
@@ -64,32 +61,25 @@ export default function AdminPage() {
       alert("No data to download yet.");
       return;
     }
-    const headers = ["#", "Name", "Phone", "Email", "City", "Age Group", "Items", "Total (₹)", "Payment", "Time", "Notes"];
+    const headers = ["#", "Name", "Firm Name", "Mobile", "GST Number", "Address", "Dealing In", "Date"];
     const rows = submissions.map((e, i) => [
       i + 1,
-      e.name,
-      e.phone,
-      e.email || "",
-      e.city || "",
-      e.age || "",
-      `"${e.items.replace(/"/g, '""')}"`,
-      e.total || 0,
-      e.payment || "",
-      new Date(e.createdAt).toLocaleString("en-IN"),
-      `"${(e.notes || "").replace(/"/g, '""')}"`
+      `"${e.name.replace(/"/g, '""')}"`,
+      `"${e.firmName.replace(/"/g, '""')}"`,
+      e.mobile,
+      e.gst || "",
+      `"${e.address.replace(/"/g, '""')}"`,
+      `"${e.dealingIn.replace(/"/g, '""')}"`,
+      new Date(e.createdAt).toLocaleString("en-IN")
     ].join(","));
     
     const csv = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "clothing_stall_" + new Date().toISOString().slice(0, 10) + ".csv";
+    a.download = "business_registrations_" + new Date().toISOString().slice(0, 10) + ".csv";
     a.click();
   };
-
-  const totalRevenue = submissions.reduce((sum, s) => sum + (s.total || 0), 0);
-  const upiCount = submissions.filter(s => s.payment === "UPI").length;
-  const cashCount = submissions.filter(s => s.payment === "Cash").length;
 
   // Pagination Logic
   const totalPages = Math.ceil(submissions.length / rowsPerPage);
@@ -124,7 +114,7 @@ export default function AdminPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-semibold text-[#0F172A] font-inter">Admin Dashboard</h2>
-          <p className="text-[15px] text-[#334155] mt-1">Manage and view all customer submissions.</p>
+          <p className="text-[15px] text-[#334155] mt-1">Manage and view all business registrations.</p>
         </div>
         <div className="flex gap-3 w-full sm:w-auto">
           <button onClick={handleDownloadCSV} className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[10px] text-[14px] font-medium bg-[#3B82F6] text-white hover:bg-[#2563EB] active:scale-[0.98] transition-all font-inter shadow-sm">
@@ -148,79 +138,61 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6 mb-8">
         <div className="bg-white rounded-[14px] p-5 shadow-sm border border-[#CBD5E1]">
-          <div className="text-[14px] font-medium text-[#334155] mb-1.5 font-roboto">Total Customers</div>
+          <div className="text-[14px] font-medium text-[#334155] mb-1.5 font-roboto">Total Registrations</div>
           <div className="text-3xl font-semibold text-[#0F172A] font-inter">{submissions.length}</div>
         </div>
         <div className="bg-white rounded-[14px] p-5 shadow-sm border border-[#CBD5E1]">
-          <div className="text-[14px] font-medium text-[#334155] mb-1.5 font-roboto">Total Revenue</div>
-          <div className="text-3xl font-semibold text-[#3B82F6] font-inter">₹{totalRevenue.toLocaleString('en-IN')}</div>
-        </div>
-        <div className="bg-white rounded-[14px] p-5 shadow-sm border border-[#CBD5E1]">
-          <div className="text-[14px] font-medium text-[#334155] mb-1.5 font-roboto">UPI Payments</div>
-          <div className="text-3xl font-semibold text-[#0F172A] font-inter">{upiCount}</div>
-        </div>
-        <div className="bg-white rounded-[14px] p-5 shadow-sm border border-[#CBD5E1]">
-          <div className="text-[14px] font-medium text-[#334155] mb-1.5 font-roboto">Cash Payments</div>
-          <div className="text-3xl font-semibold text-[#0F172A] font-inter">{cashCount}</div>
+          <div className="text-[14px] font-medium text-[#334155] mb-1.5 font-roboto">GST Registered Firms</div>
+          <div className="text-3xl font-semibold text-[#3B82F6] font-inter">{submissions.filter(s => s.gst && s.gst.length > 0).length}</div>
         </div>
       </div>
 
       <div className="rounded-[14px] border border-[#CBD5E1] shadow-sm bg-white overflow-hidden w-full flex flex-col">
         <div className="overflow-x-auto w-full">
-          <Table className="w-full text-left border-collapse min-w-[1000px]">
+          <Table className="w-full text-left border-collapse min-w-[1200px]">
             <TableHeader className="bg-[#F8FAFC] sticky top-0 z-10 border-b border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
               <TableRow className="hover:bg-transparent border-none">
                 <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter w-[60px]">#</TableHead>
-                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[150px]">Customer</TableHead>
-                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[150px]">Contact</TableHead>
-                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[120px]">City</TableHead>
-                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[250px]">Items</TableHead>
-                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter w-[120px]">Amount</TableHead>
-                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter w-[120px]">Payment</TableHead>
+                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[150px]">Name</TableHead>
+                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[180px]">Firm Name</TableHead>
+                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[150px]">Mobile</TableHead>
+                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[150px]">GST Number</TableHead>
+                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[250px]">Dealing In</TableHead>
+                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[200px]">Address</TableHead>
                 <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[150px]">Date</TableHead>
-                <TableHead className="text-[#334155] font-medium px-5 py-4 text-[13px] uppercase tracking-wider font-inter min-w-[200px]">Notes</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-16 text-[#334155] font-medium">Loading records...</TableCell>
+                  <TableCell colSpan={8} className="text-center py-16 text-[#334155] font-medium">Loading records...</TableCell>
                 </TableRow>
               ) : submissions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-16 text-[#334155] font-medium">No records found. New submissions will appear here.</TableCell>
+                  <TableCell colSpan={8} className="text-center py-16 text-[#334155] font-medium">No records found. New submissions will appear here.</TableCell>
                 </TableRow>
               ) : (
                 currentData.map((sub, i) => (
                   <TableRow key={sub._id} className="transition-colors hover:bg-[#F8FAFC] border-b border-[#CBD5E1] last:border-0">
                     <TableCell className="px-5 py-4 text-[14px] text-[#334155]">{startIndex + i + 1}</TableCell>
+                    <TableCell className="px-5 py-4 text-[14px] font-medium text-[#0F172A]">{sub.name}</TableCell>
+                    <TableCell className="px-5 py-4 text-[14px] text-[#0F172A] font-medium">{sub.firmName}</TableCell>
+                    <TableCell className="px-5 py-4 text-[14px] text-[#334155]">{sub.mobile}</TableCell>
                     <TableCell className="px-5 py-4">
-                      <div className="font-medium text-[#0F172A] text-[14px]">{sub.name}</div>
-                      <div className="text-[12px] text-[#334155] mt-0.5">{sub.age || "Age not set"}</div>
-                    </TableCell>
-                    <TableCell className="px-5 py-4">
-                      <div className="text-[#0F172A] text-[14px]">{sub.phone}</div>
-                      {sub.email && <div className="text-[12px] text-[#334155] truncate max-w-[150px] mt-0.5" title={sub.email}>{sub.email}</div>}
-                    </TableCell>
-                    <TableCell className="px-5 py-4 text-[14px] text-[#334155]">{sub.city || "—"}</TableCell>
-                    <TableCell className="px-5 py-4 text-[14px] text-[#0F172A] break-words">{sub.items}</TableCell>
-                    <TableCell className="px-5 py-4 text-[14px] font-medium text-[#0F172A]">₹{sub.total || 0}</TableCell>
-                    <TableCell className="px-5 py-4">
-                      {sub.payment ? (
+                      {sub.gst ? (
                         <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-[#EFF6FF] text-[#3B82F6] border border-[#BFDBFE]">
-                          {sub.payment}
+                          {sub.gst}
                         </span>
                       ) : (
                         <span className="text-[#334155]">—</span>
                       )}
                     </TableCell>
+                    <TableCell className="px-5 py-4 text-[14px] text-[#334155] break-words">{sub.dealingIn}</TableCell>
+                    <TableCell className="px-5 py-4 text-[14px] text-[#334155] break-words">{sub.address}</TableCell>
                     <TableCell className="px-5 py-4 text-[13px] text-[#334155] whitespace-nowrap">
                       {new Date(sub.createdAt).toLocaleString("en-IN", { hour12: true, month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit' })}
-                    </TableCell>
-                    <TableCell className="px-5 py-4 text-[13px] text-[#334155] break-words max-w-[250px]" title={sub.notes}>
-                      {sub.notes || "—"}
                     </TableCell>
                   </TableRow>
                 ))
